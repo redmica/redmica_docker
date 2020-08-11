@@ -1,6 +1,6 @@
 # RedMica's Dockerfile
 
-This repository develops RedMica's Dockerfile (https://hub.docker.com/u/redmica/redmica).  
+This repository develops RedMica's Dockerfile [Docker Hub link](https://hub.docker.com/r/redmica/redmica).  
 How to use Docker image: [Description](description.md)
 
 ## Add RedMica version
