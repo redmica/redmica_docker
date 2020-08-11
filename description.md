@@ -1,12 +1,13 @@
 # Supported tags
 
-- 1.1, latest
-- 1.1-passenger
-- 1.1-alpine
+- [1.1.0](https://github.com/redmica/redmica_docker/blob/2dd12c8a21957b8484216af28a5cc11c2c066452/1.1.0/Dockerfile), [1.1](https://github.com/redmica/redmica_docker/blob/2dd12c8a21957b8484216af28a5cc11c2c066452/1.1.0/Dockerfile), [latest](https://github.com/redmica/redmica_docker/blob/2dd12c8a21957b8484216af28a5cc11c2c066452/1.1.0/Dockerfile)
+- [1.1.0-passenger](https://github.com/redmica/redmica_docker/blob/2dd12c8a21957b8484216af28a5cc11c2c066452/1.1.0/passenger/Dockerfile)
+- [1.1.0-alpine](https://github.com/redmica/redmica_docker/blob/2dd12c8a21957b8484216af28a5cc11c2c066452/1.1.0/alpine/Dockerfile)
 
-- 1.0
-- 1.0-passenger
-- 1.0-alpine
+
+- [1.0.2](https://github.com/redmica/redmica_docker/blob/2dd12c8a21957b8484216af28a5cc11c2c066452/1.0.2/Dockerfile), [1.0](https://github.com/redmica/redmica_docker/blob/2dd12c8a21957b8484216af28a5cc11c2c066452/1.0.2/Dockerfile)
+- [1.0.2-passenger](https://github.com/redmica/redmica_docker/blob/2dd12c8a21957b8484216af28a5cc11c2c066452/1.0.2/passenger/Dockerfile)
+- [1.0.2-alpine](https://github.com/redmica/redmica_docker/blob/2dd12c8a21957b8484216af28a5cc11c2c066452/1.0.2/alpine/Dockerfile)
 
 # How to use this image
 
@@ -19,8 +20,10 @@ Where to file issues: https://github.com/redmica/redmica_docker/issues
 This is the simplest setup; just run RedMica.
 
 ```console
-$ docker run -d --name some-redmica redmica/redmica
+$ docker run -d -p 8000:3000 --name some-redmica redmica/redmica
 ```
+
+Access http://localhost:8000
 
 > not for multi-user production use ([redmine wiki](http://www.redmine.org/projects/redmine/wiki/RedmineInstall#Supported-database-back-ends))
 
