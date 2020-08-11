@@ -21,9 +21,10 @@ RUN set -eux; \
 		subversion \
 		\
 # we need "gsfonts" for generating PNGs of Gantt charts
-# and "ghostscript" for creating PDF thumbnails (in 4.1+)
+# and "ghostscript" for creating PDF thumbnails (in Redmine 4.1+)
+		ghostscript \
 		ghostscript-fonts \
-		imagemagick6 \
+		imagemagick \
 	;
 
 ENV RAILS_ENV production
@@ -38,12 +39,10 @@ RUN set -eux; \
 	chown redmine:redmine "$HOME"; \
 	chmod 1777 "$HOME"
 
-ENV REDMINE_VERSION 4.0.7
-ENV REDMINE_DOWNLOAD_MD5 baad690fdccd7f0282d53beb0ee2c47b
+ENV REDMICA_VERSION 1.1.0
 
 RUN set -eux; \
-	wget -O redmine.tar.gz "https://www.redmine.org/releases/redmine-${REDMINE_VERSION}.tar.gz"; \
-	echo "$REDMINE_DOWNLOAD_MD5 *redmine.tar.gz" | md5sum -c -; \
+	wget -O redmine.tar.gz "https://github.com/redmica/redmica/archive/v${REDMICA_VERSION}.tar.gz"; \
 	tar -xf redmine.tar.gz --strip-components=1; \
 	rm redmine.tar.gz files/delete.me log/delete.me; \
 	mkdir -p log public/plugin_assets sqlite tmp/pdf tmp/pids; \
@@ -68,8 +67,6 @@ RUN set -eux; \
 		sqlite-dev \
 		ttf2ufm \
 		zlib-dev \
-# in 4.1+, imagemagick6-dev is no longer necessary/used: https://www.redmine.org/issues/30492
-		imagemagick6-dev \
 	; \
 	\
 	su-exec redmine bundle install --jobs "$(nproc)" --without development test; \

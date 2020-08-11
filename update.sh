@@ -15,25 +15,20 @@ if [ ${#versions[@]} -eq 0 ]; then
 fi
 versions=( "${versions[@]%/}" )
 
-relasesUrl='https://www.redmine.org/releases'
-versionsPage="$(wget -qO- "$relasesUrl")"
-
 passenger="$(wget -qO- 'https://rubygems.org/api/v1/gems/passenger.json' | sed -r 's/^.*"version":"([^"]+)".*$/\1/')"
 
+dockerfileDirectories=''
+
 for version in "${versions[@]}"; do
-	fullVersion="$(echo $versionsPage | sed -r "s/.*($version\.[0-9]+)\.tar\.gz[^.].*/\1/" | sort -V | tail -1)"
-	md5="$(wget -qO- "$relasesUrl/redmine-$fullVersion.tar.gz.md5" | cut -d' ' -f1)"
-
 	rubyVersion="${rubyVersions[$version]:-$defaultRubyVersion}"
-
-	echo "$version: $fullVersion (ruby $rubyVersion; passenger $passenger)"
+	dockerfileDirectories+="\'$version\', \'$version\/alpine\', \'$version\/passenger\', "
+	echo "$version: (ruby $rubyVersion; passenger $passenger)"
 
 	commonSedArgs=(
 		-r
-		-e 's/%%REDMINE_VERSION%%/'"$fullVersion"'/'
+		-e 's/%%REDMICA_VERSION%%/'"$version"'/'
 		-e 's/%%RUBY_VERSION%%/'"$rubyVersion"'/'
-		-e 's/%%REDMINE_DOWNLOAD_MD5%%/'"$md5"'/'
-		-e 's/%%REDMINE%%/redmine:'"$version"'/'
+		-e 's/%%REDMICA%%/redmica\/redmica:'"$version"'/'
 		-e 's/%%PASSENGER_VERSION%%/'"$passenger"'/'
 	)
 	alpineSedArgs=()
@@ -41,20 +36,11 @@ for version in "${versions[@]}"; do
 	# https://github.com/docker-library/redmine/pull/184
 	# https://www.redmine.org/issues/22481
 	# https://www.redmine.org/issues/30492
-	if [ "$version" = 4.0 ]; then
-		commonSedArgs+=(
-			-e '/ghostscript /d'
-		)
-		alpineSedArgs+=(
-			-e 's/imagemagick/imagemagick6/g'
-		)
-	else
-		commonSedArgs+=(
-			-e '/imagemagick-dev/d'
-			-e '/libmagickcore-dev/d'
-			-e '/libmagickwand-dev/d'
-		)
-	fi
+	commonSedArgs+=(
+		-e '/imagemagick-dev/d'
+		-e '/libmagickcore-dev/d'
+		-e '/libmagickwand-dev/d'
+	)
 
 	cp docker-entrypoint.sh "$version/"
 	sed "${commonSedArgs[@]}" Dockerfile-debian.template > "$version/Dockerfile"
@@ -67,3 +53,9 @@ for version in "${versions[@]}"; do
 	sed -i -e 's/gosu/su-exec/g' "$version/alpine/docker-entrypoint.sh"
 	sed "${commonSedArgs[@]}" "${alpineSedArgs[@]}" Dockerfile-alpine.template > "$version/alpine/Dockerfile"
 done
+
+sedTestDirectories=(
+	-r
+	-e 's/%%DOCKERFILE_DIRECTORIES%%/'"$dockerfileDirectories"'/'
+)
+sed "${sedTestDirectories[@]}" circleci-config.template > ".circleci/config.yml"

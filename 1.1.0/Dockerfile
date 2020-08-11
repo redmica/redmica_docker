@@ -17,7 +17,8 @@ RUN set -eux; \
 		subversion \
 		\
 # we need "gsfonts" for generating PNGs of Gantt charts
-# and "ghostscript" for creating PDF thumbnails (in 4.1+)
+# and "ghostscript" for creating PDF thumbnails (in Redmine 4.1+)
+		ghostscript \
 		gsfonts \
 		imagemagick \
 	; \
@@ -53,6 +54,7 @@ RUN set -eux; \
 	wget -O /usr/local/bin/tini "https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini-$dpkgArch"; \
 	wget -O /usr/local/bin/tini.asc "https://github.com/krallin/tini/releases/download/v$TINI_VERSION/tini-$dpkgArch.asc"; \
 	export GNUPGHOME="$(mktemp -d)"; \
+	# If the following command fails, change ha.pool.sks-keyservers.net to hkp://p80.pool.sks-keyservers.net:80
 	gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys 6380DC428747F6C393FEACA59A84159D7001A4E5; \
 	gpg --batch --verify /usr/local/bin/tini.asc /usr/local/bin/tini; \
 	gpgconf --kill all; \
@@ -77,12 +79,10 @@ RUN set -eux; \
 	chown redmine:redmine "$HOME"; \
 	chmod 1777 "$HOME"
 
-ENV REDMINE_VERSION 4.0.7
-ENV REDMINE_DOWNLOAD_MD5 baad690fdccd7f0282d53beb0ee2c47b
+ENV REDMICA_VERSION 1.1.0
 
 RUN set -eux; \
-	wget -O redmine.tar.gz "https://www.redmine.org/releases/redmine-${REDMINE_VERSION}.tar.gz"; \
-	echo "$REDMINE_DOWNLOAD_MD5 *redmine.tar.gz" | md5sum -c -; \
+	wget -O redmine.tar.gz "https://github.com/redmica/redmica/archive/v${REDMICA_VERSION}.tar.gz"; \
 	tar -xf redmine.tar.gz --strip-components=1; \
 	rm redmine.tar.gz files/delete.me log/delete.me; \
 	mkdir -p log public/plugin_assets sqlite tmp/pdf tmp/pids; \
@@ -105,8 +105,6 @@ RUN set -eux; \
 		libsqlite3-dev \
 		make \
 		patch \
-# in 4.1+, libmagickcore-dev and libmagickwand-dev are no longer necessary/used: https://www.redmine.org/issues/30492
-		libmagickcore-dev libmagickwand-dev \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
