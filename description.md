@@ -1,8 +1,8 @@
 # Supported tags
 
-- [1.2.0](), [1.2](), [latest]()
-- [1.2.0-passenger]()
-- [1.2.0-alpine]()
+- [1.2.0](https://github.com/redmica/redmica_docker/blob/1198c0470f56a72a75c9f18268133d439213997f/1.2.0/Dockerfile), [1.2](https://github.com/redmica/redmica_docker/blob/1198c0470f56a72a75c9f18268133d439213997f/1.2.0/Dockerfile), [latest](https://github.com/redmica/redmica_docker/blob/1198c0470f56a72a75c9f18268133d439213997f/1.2.0/Dockerfile)
+- [1.2.0-passenger](https://github.com/redmica/redmica_docker/blob/1198c0470f56a72a75c9f18268133d439213997f/1.2.0/passenger/Dockerfile)
+- [1.2.0-alpine](https://github.com/redmica/redmica_docker/blob/1198c0470f56a72a75c9f18268133d439213997f/1.2.0/alpine/Dockerfile)
 
 ---
 
