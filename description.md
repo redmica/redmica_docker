@@ -1,3 +1,5 @@
+![RedMica logo](https://github.com/redmica/redmica-logo/raw/master/horizontal/redmica-logo-horizontal-small.png "RedMica logo")
+
 # Supported tags
 
 - [1.2.0](https://github.com/redmica/redmica_docker/blob/1198c0470f56a72a75c9f18268133d439213997f/1.2.0/Dockerfile), [1.2](https://github.com/redmica/redmica_docker/blob/1198c0470f56a72a75c9f18268133d439213997f/1.2.0/Dockerfile), [latest](https://github.com/redmica/redmica_docker/blob/1198c0470f56a72a75c9f18268133d439213997f/1.2.0/Dockerfile)
