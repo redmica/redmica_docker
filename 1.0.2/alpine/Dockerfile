@@ -1,4 +1,4 @@
-FROM ruby:2.6-alpine3.11
+FROM ruby:2.6-alpine3.13
 
 # explicitly set uid/gid to guarantee that it won't change in the future
 # the values 999:999 are identical to the current user/group id assigned
@@ -14,7 +14,6 @@ RUN set -eux; \
 		tzdata \
 		wget \
 		\
-		bzr \
 		git \
 		mercurial \
 		openssh-client \
@@ -86,10 +85,14 @@ RUN set -eux; \
 	rm /usr/local/bundle/gems/rbpdf-font-1.19.*/lib/fonts/ttf2ufm/ttf2ufm; \
 	\
 	runDeps="$( \
-		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/bundle/gems \
-		| tr ',' '\n' \
-		| sort -u \
-		| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+		find /usr/local -type f -executable -exec ldd '{}' ';' \
+			| awk '/=>/ { print $(NF-1) }' \
+			| sort -u \
+			| grep -v '^/usr/local/' \
+			| xargs -rn1 basename \
+			| grep -v 'ld-musl-' \
+			| sed -e 's/^/so:/' \
+			| sort -u \
 	)"; \
 	apk add --no-network --virtual .redmine-rundeps $runDeps; \
 	apk del --no-network .build-deps
