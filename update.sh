@@ -44,6 +44,7 @@ for version in "${versions[@]}"; do
 		-e '/libmagickwand-dev/d'
 	)
 
+	mkdir -p "$version"
 	cp docker-entrypoint.sh "$version/"
 	sed "${commonSedArgs[@]}" Dockerfile-debian.template > "$version/Dockerfile"
 
