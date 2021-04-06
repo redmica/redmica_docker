@@ -2,9 +2,11 @@
 set -Eeuo pipefail
 
 # see https://www.redmine.org/projects/redmine/wiki/redmineinstall
-defaultRubyVersion='2.6'
+defaultRubyVersion='2.7'
 declare -A rubyVersions=(
-  [1.2.0]='2.7'
+  [1.0.2]='2.6'
+  [1.1.0]='2.6'
+  [1.1.1]='2.6'
 )
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
@@ -42,6 +44,7 @@ for version in "${versions[@]}"; do
 		-e '/libmagickwand-dev/d'
 	)
 
+	mkdir -p "$version"
 	cp docker-entrypoint.sh "$version/"
 	sed "${commonSedArgs[@]}" Dockerfile-debian.template > "$version/Dockerfile"
 
