@@ -38,11 +38,21 @@ for version in "${versions[@]}"; do
 	# https://github.com/docker-library/redmine/pull/184
 	# https://www.redmine.org/issues/22481
 	# https://www.redmine.org/issues/30492
-	commonSedArgs+=(
-		-e '/imagemagick-dev/d'
-		-e '/libmagickcore-dev/d'
-		-e '/libmagickwand-dev/d'
-	)
+	if [ "$version" = 1.0.0 ] || [ "$version" = 1.0.1 ] || [ "$version" = 1.0.2 ]; then
+		commonSedArgs+=(
+			-e '/ghostscript /d'
+			-e '\!ImageMagick-6/policy\.xml!d'
+		)
+		alpineSedArgs+=(
+			-e 's/imagemagick/imagemagick6/g'
+		)
+	else
+		commonSedArgs+=(
+			-e '/imagemagick-dev/d'
+			-e '/libmagickcore-dev/d'
+			-e '/libmagickwand-dev/d'
+		)
+	fi
 
 	mkdir -p "$version"
 	cp docker-entrypoint.sh "$version/"
