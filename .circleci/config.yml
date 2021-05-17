@@ -15,7 +15,9 @@ jobs:
             cd << parameters.path >>
             docker build -t redmica .
             docker run -d -p 3000:3000 redmica
-            curl http://localhost:3000 | grep redmine || true
+            apt update
+            apt install -y curl
+            curl http://localhost:3000 | grep redmine; echo $?
             docker ps -a
 
 workflows:
