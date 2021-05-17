@@ -18,7 +18,6 @@ RUN set -eux; \
 		\
 # we need "gsfonts" for generating PNGs of Gantt charts
 # and "ghostscript" for creating PDF thumbnails (in Redmine 4.1+)
-		ghostscript \
 		gsfonts \
 		imagemagick \
 # grab gosu for easy step-down from root
@@ -26,8 +25,6 @@ RUN set -eux; \
 # grab tini for signal processing and zombie killing
 		tini \
 	; \
-# allow imagemagick to use ghostscript for PDF -> PNG thumbnail conversion (4.1+)
-	sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml; \
 	rm -rf /var/lib/apt/lists/*
 
 ENV RAILS_ENV production
@@ -68,6 +65,8 @@ RUN set -eux; \
 		libsqlite3-dev \
 		make \
 		patch \
+# in 4.1+, libmagickcore-dev and libmagickwand-dev are no longer necessary/used: https://www.redmine.org/issues/30492
+		libmagickcore-dev libmagickwand-dev \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
