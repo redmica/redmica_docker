@@ -14,11 +14,14 @@ jobs:
           command: |
             cd << parameters.path >>
             docker build -t redmica .
-            docker run -d -p 3000:3000 redmica
-            apt update
-            apt install -y curl
-            curl http://localhost:3000 | grep redmine; echo $?
-            docker ps -a
+            docker run -d --name=test-redmica-container -p 3000:3000 redmica
+      - run: sleep 30
+      - run: |
+          if [[ "`echo << parameters.path >> | grep alpine`" ]]; then
+            docker exec -it test-redmica-container bash -c "apk update;apk add curl;curl localhost:3000 | grep redmine"
+          else
+            docker exec -it test-redmica-container bash -c "apt-get update;apt-get install -y curl;curl localhost:3000 | grep redmine"
+          fi
 
 workflows:
   workflow:
