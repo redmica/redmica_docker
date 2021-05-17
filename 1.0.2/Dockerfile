@@ -24,6 +24,8 @@ RUN set -eux; \
 		gosu \
 # grab tini for signal processing and zombie killing
 		tini \
+# https://github.com/docker-library/ruby/issues/344
+		shared-mime-info \
 	; \
 	rm -rf /var/lib/apt/lists/*
 

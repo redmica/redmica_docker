@@ -25,6 +25,8 @@ RUN set -eux; \
 		gosu \
 # grab tini for signal processing and zombie killing
 		tini \
+# https://github.com/docker-library/ruby/issues/344
+		shared-mime-info \
 	; \
 # allow imagemagick to use ghostscript for PDF -> PNG thumbnail conversion (4.1+)
 	sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml; \
