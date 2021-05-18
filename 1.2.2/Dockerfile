@@ -1,4 +1,4 @@
-FROM ruby:%%RUBY_VERSION%%-slim-buster
+FROM ruby:2.7-slim-buster
 
 # explicitly set uid/gid to guarantee that it won't change in the future
 # the values 999:999 are identical to the current user/group id assigned
@@ -44,7 +44,7 @@ RUN set -eux; \
 	chown redmine:redmine "$HOME"; \
 	chmod 1777 "$HOME"
 
-ENV REDMICA_VERSION %%REDMICA_VERSION%%
+ENV REDMICA_VERSION 1.2.2
 
 RUN set -eux; \
 	wget -O redmine.tar.gz "https://github.com/redmica/redmica/archive/v${REDMICA_VERSION}.tar.gz"; \
@@ -70,8 +70,6 @@ RUN set -eux; \
 		libsqlite3-dev \
 		make \
 		patch \
-# in 4.1+, libmagickcore-dev and libmagickwand-dev are no longer necessary/used: https://www.redmine.org/issues/30492
-		libmagickcore-dev libmagickwand-dev \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\

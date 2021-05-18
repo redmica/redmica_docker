@@ -21,9 +21,8 @@ RUN set -eux; \
 		\
 # we need "gsfonts" for generating PNGs of Gantt charts
 # and "ghostscript" for creating PDF thumbnails (in Redmine 4.1+)
-		ghostscript \
 		ghostscript-fonts \
-		imagemagick \
+		imagemagick6 \
 # https://github.com/docker-library/ruby/issues/344
 		shared-mime-info \
 	;
@@ -70,6 +69,8 @@ RUN set -eux; \
 		sqlite-dev \
 		ttf2ufm \
 		zlib-dev \
+# in 4.1+, imagemagick6-dev is no longer necessary/used: https://www.redmine.org/issues/30492
+		imagemagick6-dev \
 	; \
 	\
 	su-exec redmine bundle config --local without 'development test'; \

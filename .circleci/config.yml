@@ -14,9 +14,14 @@ jobs:
           command: |
             cd << parameters.path >>
             docker build -t redmica .
-            docker run -d -p 3000:3000 redmica
-            curl http://localhost:3000 | grep redmine || true
-            docker ps -a
+            docker run -d --name=test-redmica-container -p 3000:3000 redmica
+      - run: sleep 30
+      - run: |
+          if [[ "`echo << parameters.path >> | grep alpine`" ]]; then
+            docker exec -it test-redmica-container bash -c "apk update;apk add curl;curl localhost:3000 | grep redmine"
+          else
+            docker exec -it test-redmica-container bash -c "apt-get update;apt-get install -y curl;curl localhost:3000 | grep redmine"
+          fi
 
 workflows:
   workflow:
@@ -24,4 +29,4 @@ workflows:
       - test:
           matrix:
             parameters:
-              path: ['1.0.2', '1.0.2/alpine', '1.0.2/passenger', '1.1.0', '1.1.0/alpine', '1.1.0/passenger', '1.1.1', '1.1.1/alpine', '1.1.1/passenger', '1.2.0', '1.2.0/alpine', '1.2.0/passenger', '1.2.1', '1.2.1/alpine', '1.2.1/passenger', ]
+              path: ['1.0.2', '1.0.2/alpine', '1.0.2/passenger', '1.1.0', '1.1.0/alpine', '1.1.0/passenger', '1.1.1', '1.1.1/alpine', '1.1.1/passenger', '1.2.0', '1.2.0/alpine', '1.2.0/passenger', '1.2.1', '1.2.1/alpine', '1.2.1/passenger', '1.2.2', '1.2.2/alpine', '1.2.2/passenger', ]
