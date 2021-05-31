@@ -29,4 +29,4 @@ workflows:
       - test:
           matrix:
             parameters:
-              path: ['1.0.2', '1.0.2/alpine', '1.0.2/passenger', '1.1.0', '1.1.0/alpine', '1.1.0/passenger', '1.1.1', '1.1.1/alpine', '1.1.1/passenger', '1.2.0', '1.2.0/alpine', '1.2.0/passenger', '1.2.1', '1.2.1/alpine', '1.2.1/passenger', '1.2.2', '1.2.2/alpine', '1.2.2/passenger', ]
+              path: ['1.0.2', '1.0.2/alpine', '1.0.2/passenger', '1.1.0', '1.1.0/alpine', '1.1.0/passenger', '1.1.1', '1.1.1/alpine', '1.1.1/passenger', '1.2.0', '1.2.0/alpine', '1.2.0/passenger', '1.2.1', '1.2.1/alpine', '1.2.1/passenger', '1.2.2', '1.2.2/alpine', '1.2.2/passenger', '1.3.0', '1.3.0/alpine', '1.3.0/passenger', ]
