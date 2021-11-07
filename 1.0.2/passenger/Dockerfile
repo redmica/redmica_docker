@@ -1,6 +1,6 @@
 FROM redmica/redmica:1.0.2
 
-ENV PASSENGER_VERSION 6.0.8
+ENV PASSENGER_VERSION 6.0.12
 
 RUN set -eux; \
 	\
