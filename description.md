@@ -8,7 +8,7 @@
 
 ---
 
-- [1.3.0](https://github.com/redmica/redmica_docker/blob/master/1.3.0/Dockerfile), [1.3](https://github.com/redmica/redmica_docker/blob/master/1.3.0/Dockerfile), [latest](https://github.com/redmica/redmica_docker/blob/master/1.3.0/Dockerfile)
+- [1.3.0](https://github.com/redmica/redmica_docker/blob/master/1.3.0/Dockerfile), [1.3](https://github.com/redmica/redmica_docker/blob/master/1.3.0/Dockerfile)
 - [1.3.0-passenger](https://github.com/redmica/redmica_docker/blob/master/1.3.0/passenger/Dockerfile)
 - [1.3.0-alpine](https://github.com/redmica/redmica_docker/blob/master/1.3.0/alpine/Dockerfile)
 
