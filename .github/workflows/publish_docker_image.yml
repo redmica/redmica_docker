@@ -1,0 +1,68 @@
+name: Publish Docker images to DockerHub
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  publish_images:
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          [1.0.2, 1.1.0, 1.1.1, 1.2.0, 1.2.1, 1.2.2, 1.3.0, 2.0.0]
+        include:
+          - version: 2.0.0
+            other_tag: 2.0
+            latest: true
+          - version: 1.3.0
+            other_tag: 1.3
+          - version: 1.2.2
+            other_tag: 1.2
+          - version: 1.1.1
+            other_tag: 1.1
+          - version: 1.0.2
+            other_tag: 1.0
+    name: Publish Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ${{ secrets.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ matrix.version }}
+            type=raw,value=${{ matrix.other_tag }},enable=${{ matrix.other_tag != null }}
+            type=raw,value=latest,enable=${{ matrix.latest != null }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ matrix.version }}/.
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+
+      - name: Build and push Alpine docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ matrix.version }}/alpine/.
+          push: true
+          tags: ${{ secrets.IMAGE_NAME }}:${{ matrix.version }}-alpine
+
+      - name: Build and push Passenger docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ matrix.version }}/passenger/.
+          push: true
+          tags: ${{ secrets.IMAGE_NAME }}:${{ matrix.version }}-passenger
