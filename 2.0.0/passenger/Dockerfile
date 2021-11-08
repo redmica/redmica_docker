@@ -1,4 +1,4 @@
-FROM redmica/redmica:1.0.2
+FROM redmica/redmica:2.0.0
 
 ENV PASSENGER_VERSION 6.0.12
 
