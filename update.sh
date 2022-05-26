@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 # see https://www.redmine.org/projects/redmine/wiki/redmineinstall
-defaultRubyVersion='2.7'
+defaultRubyVersion='3.1'
 declare -A rubyVersions=(
   [1.0.2]='2.6'
   [1.1.0]='2.6'
@@ -58,13 +58,17 @@ for version in "${versions[@]}"; do
 	cp docker-entrypoint.sh "$version/"
 	sed "${commonSedArgs[@]}" Dockerfile-debian.template > "$version/Dockerfile"
 
-	mkdir -p "$version/passenger"
-	sed "${commonSedArgs[@]}" Dockerfile-passenger.template > "$version/passenger/Dockerfile"
+	if [ -n "$doPassenger" ]; then
+		mkdir -p "$version/passenger"
+		sed "${commonSedArgs[@]}" \
+			-e 's/%%PASSENGER_VERSION%%/'"$passenger"'/' \
+			Dockerfile-passenger.template > "$version/passenger/Dockerfile"
+	fi
 
 	mkdir -p "$version/alpine"
 	cp docker-entrypoint.sh "$version/alpine/"
 	sed -i -e 's/gosu/su-exec/g' "$version/alpine/docker-entrypoint.sh"
-	sed "${commonSedArgs[@]}" "${alpineSedArgs[@]}" Dockerfile-alpine.template > "$version/alpine/Dockerfile"
+	sed "${commonSedArgs[@]}" Dockerfile-alpine.template > "$version/alpine/Dockerfile"
 done
 
 sedTestDirectories=(
