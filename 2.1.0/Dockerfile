@@ -1,4 +1,4 @@
-FROM ruby:%%RUBY_VERSION%%-slim-bullseye
+FROM ruby:3.1-slim-bullseye
 
 # explicitly set uid/gid to guarantee that it won't change in the future
 # the values 999:999 are identical to the current user/group id assigned
@@ -45,7 +45,7 @@ RUN set -eux; \
 	chown redmine:redmine "$HOME"; \
 	chmod 1777 "$HOME"
 
-ENV REDMICA_VERSION %%REDMICA_VERSION%%
+ENV REDMICA_VERSION 2.1.0
 
 RUN set -eux; \
 	wget -O redmine.tar.gz "https://github.com/redmica/redmica/archive/v${REDMICA_VERSION}.tar.gz"; \

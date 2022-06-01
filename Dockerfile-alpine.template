@@ -1,4 +1,4 @@
-FROM ruby:%%RUBY_VERSION%%-alpine3.13
+FROM ruby:%%RUBY_VERSION%%-alpine3.15
 
 # explicitly set uid/gid to guarantee that it won't change in the future
 # the values 999:999 are identical to the current user/group id assigned
@@ -14,6 +14,7 @@ RUN set -eux; \
 		tzdata \
 		wget \
 		\
+		breezy \
 		git \
 		mercurial \
 		openssh-client \
@@ -70,11 +71,13 @@ RUN set -eux; \
 		sqlite-dev \
 		ttf2ufm \
 		zlib-dev \
-# in 4.1+, imagemagick-dev is no longer necessary/used: https://www.redmine.org/issues/30492
-		imagemagick-dev \
 	; \
 	\
 	su-exec redmine bundle config --local without 'development test'; \
+# https://github.com/redmine/redmine/commit/23dc108e70a0794f444803ac827a690085dcd557
+# ("gem puma" already exists in the Gemfile, but under "group :test" and we want it all the time)
+	puma="$(grep -E "^[[:space:]]*gem [:'\"]puma['\",[:space:]].*\$" Gemfile)"; \
+	{ echo; echo "$puma"; } | sed -re 's/^[[:space:]]+//' >> Gemfile; \
 # fill up "database.yml" with bogus entries so the redmine Gemfile will pre-install all database adapter dependencies
 # https://github.com/redmine/redmine/blob/e9f9767089a4e3efbd73c35fc55c5c7eb85dd7d3/Gemfile#L50-L79
 	echo '# the following entries only exist to force `bundle install` to pre-install all database adapter dependencies -- they can be safely removed/ignored' > ./config/database.yml; \
