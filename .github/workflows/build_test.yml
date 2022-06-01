@@ -7,6 +7,7 @@ jobs:
   test:
     name: build_test
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       matrix:
         target: ['2.1.0', '2.1.0/alpine']
@@ -27,7 +28,7 @@ jobs:
       - name: Test
         run: |
           if [[ "`echo ${{ matrix.target }} | grep alpine`" ]]; then
-            docker exec -it test-redmica-container bash -c "apk update;apk add curl;curl localhost:3000 | grep redmine"
+            docker exec --tty test-redmica-container bash -c "apk update;apk add curl;curl localhost:3000 | grep redmine"
           else
-            docker exec -it test-redmica-container bash -c "apt-get update;apt-get install -y curl;curl localhost:3000 | grep redmine"
+            docker exec --tty test-redmica-container bash -c "apt-get update;apt-get install -y curl;curl localhost:3000 | grep redmine"
           fi

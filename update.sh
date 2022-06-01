@@ -57,9 +57,3 @@ for version in $new_versions; do
 	sed -i -e 's/gosu/su-exec/g' "$version/alpine/docker-entrypoint.sh"
 	sed "${commonSedArgs[@]}" Dockerfile-alpine.template > "$version/alpine/Dockerfile"
 done
-
-sedTestDirectories=(
-	-r
-	-e 's/%%DOCKERFILE_DIRECTORIES%%/'"$dockerfileDirectories"'/'
-)
-sed "${sedTestDirectories[@]}" circleci-config.template > ".circleci/config.yml"
