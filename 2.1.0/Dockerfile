@@ -1,3 +1,4 @@
+# RedMica 2.1.0 Dockerfile
 FROM ruby:3.1-slim-bullseye
 
 # explicitly set uid/gid to guarantee that it won't change in the future
