@@ -10,7 +10,7 @@ $ git clone https://github.com/redmica/redmica_docker.git
 $ cd redmica_docker
 $ # Add latest RedMica version directory
 $ mkdir <new RedMica full version>
-$ docker run --rm -w /redmica_docker --volume $PWD:/redmica_docker buildpack-deps /redmica_docker/update.sh
+$ docker run --rm -w /redmica_docker --volume $PWD:/redmica_docker buildpack-deps /redmica_docker/update.sh <new RedMica full version>
 ```
 
 ## License

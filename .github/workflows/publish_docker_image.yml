@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          [2.1.0]
+          [2.1.1]
         include:
           - version: 2.1.0
             other_tag: '2.1'
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v1
@@ -54,6 +54,7 @@ jobs:
           context: ${{ matrix.version }}/.
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+          platforms: linux/amd64,linux/arm64
 
       - name: Build and push Alpine docker image
         uses: docker/build-push-action@v2
@@ -61,4 +62,5 @@ jobs:
           context: ${{ matrix.version }}/alpine/.
           push: true
           tags: ${{ secrets.IMAGE_NAME }}:${{ matrix.version }}-alpine
+          platforms: linux/amd64,linux/arm64
 

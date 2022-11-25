@@ -8,6 +8,7 @@ declare -A rubyVersions=(
   [1.1.0]='2.6'
   [1.1.1]='2.6'
   [2.1.0]='3.1'
+	[2.1.1]='3.1'
 )
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
