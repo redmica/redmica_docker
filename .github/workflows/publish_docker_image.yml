@@ -11,10 +11,10 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          [2.1.1]
+          [2.2.0]
         include:
-          - version: 2.1.1
-            other_tag: '2.1'
+          - version: 2.2.0
+            other_tag: '2.2'
             latest: true
           # - version: 2.0.0
           #   other_tag: '2.0'

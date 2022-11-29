@@ -10,7 +10,7 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        target: ['2.1.0', '2.1.0/alpine']
+        target: ['2.2.0', '2.2.0/alpine']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
