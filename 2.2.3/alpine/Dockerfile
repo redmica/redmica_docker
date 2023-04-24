@@ -1,4 +1,4 @@
-FROM ruby:3.1-alpine3.15
+FROM ruby:3.1-alpine3.16
 
 # explicitly set uid/gid to guarantee that it won't change in the future
 # the values 999:999 are identical to the current user/group id assigned
@@ -9,6 +9,7 @@ RUN set -eux; \
 	apk add --no-cache \
 		bash \
 		ca-certificates \
+		findutils \
 		su-exec \
 		tini \
 		tzdata \
@@ -21,12 +22,10 @@ RUN set -eux; \
 		subversion \
 		\
 # we need "gsfonts" for generating PNGs of Gantt charts
-# and "ghostscript" for creating PDF thumbnails (in Redmine 4.1+)
+# and "ghostscript" for creating PDF thumbnails (in 4.1+)
 		ghostscript \
 		ghostscript-fonts \
 		imagemagick \
-# https://github.com/docker-library/ruby/issues/344
-		shared-mime-info \
 	;
 
 ENV RAILS_ENV production
@@ -41,7 +40,7 @@ RUN set -eux; \
 	chown redmine:redmine "$HOME"; \
 	chmod 1777 "$HOME"
 
-ENV REDMICA_VERSION 2.1.0
+ENV REDMICA_VERSION 2.2.3
 
 RUN set -eux; \
 	wget -O redmine.tar.gz "https://github.com/redmica/redmica/archive/v${REDMICA_VERSION}.tar.gz"; \
