@@ -58,7 +58,7 @@ jobs:
             type=raw,value=latest,enable=${{ matrix.latest != null }}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: ${{ matrix.version }}/.
           push: true
