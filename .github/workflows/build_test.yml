@@ -10,12 +10,12 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        target: ['2.2.2', '2.2.2/alpine']
+        target: ['2.2.3', '2.2.3/alpine']
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - uses: docker/build-push-action@v2
+      - uses: docker/build-push-action@v4
         with:
           context: ./${{ matrix.target }}
           tags: redmica
