@@ -1,4 +1,4 @@
-FROM ruby:3.1-alpine3.17
+FROM ruby:3.2-alpine3.17
 
 # explicitly set uid/gid to guarantee that it won't change in the future
 # the values 999:999 are identical to the current user/group id assigned
@@ -39,7 +39,7 @@ RUN set -eux; \
 	chown redmine:redmine "$HOME"; \
 	chmod 1777 "$HOME"
 
-ENV REDMICA_VERSION 2.2.3
+ENV REDMICA_VERSION 2.3.0
 
 RUN set -eux; \
 	wget -O redmine.tar.gz "https://github.com/redmica/redmica/archive/v${REDMICA_VERSION}.tar.gz"; \
