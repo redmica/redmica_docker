@@ -2,9 +2,15 @@
 
 # Supported tags
 
+- [2.3.1](https://github.com/redmica/redmica_docker/blob/master/2.3.1/Dockerfile), [2.3](https://github.com/redmica/redmica_docker/blob/master/2.3.1/Dockerfile), [latest](https://github.com/redmica/redmica_docker/blob/master/2.3.1/Dockerfile)
+- [2.3.1-alpine](https://github.com/redmica/redmica_docker/blob/master/2.3.1/alpine/Dockerfile)
+
+- [2.3.0](https://github.com/redmica/redmica_docker/blob/master/2.3.0/Dockerfile)
+- [2.3.0-alpine](https://github.com/redmica/redmica_docker/blob/master/2.3.0/alpine/Dockerfile)
+
 ----
 
-- [2.2.3](https://github.com/redmica/redmica_docker/blob/master/2.2.3/Dockerfile), [2.2](https://github.com/redmica/redmica_docker/blob/master/2.2.3/Dockerfile), [latest](https://github.com/redmica/redmica_docker/blob/master/2.2.3/Dockerfile)
+- [2.2.3](https://github.com/redmica/redmica_docker/blob/master/2.2.3/Dockerfile), [2.2](https://github.com/redmica/redmica_docker/blob/master/2.2.3/Dockerfile)
 - [2.2.3-alpine](https://github.com/redmica/redmica_docker/blob/master/2.2.3/alpine/Dockerfile)
 
 ----
