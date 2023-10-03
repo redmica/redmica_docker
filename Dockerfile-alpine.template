@@ -8,6 +8,7 @@ RUN addgroup -S -g 1000 redmine && adduser -S -H -G redmine -u 999 redmine
 RUN set -eux; \
 	apk add --no-cache \
 		bash \
+		ca-certificates \
 		findutils \
 		su-exec \
 		tini \
