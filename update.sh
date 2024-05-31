@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 # see https://www.redmine.org/projects/redmine/wiki/redmineinstall
-defaultRubyVersion='3.2'
+defaultRubyVersion='3.3'
 declare -A rubyVersions=(
 )
 

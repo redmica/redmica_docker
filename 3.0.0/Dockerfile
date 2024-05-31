@@ -1,4 +1,4 @@
-FROM ruby:3.2-slim-bookworm
+FROM ruby:3.3-slim-bookworm
 
 # explicitly set uid/gid to guarantee that it won't change in the future
 # the values 999:999 are identical to the current user/group id assigned
