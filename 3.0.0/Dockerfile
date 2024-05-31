@@ -7,7 +7,6 @@ RUN groupadd -r -g 999 redmine && useradd -r -g redmine -u 999 redmine
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
-		findutils \
 		ca-certificates \
 		curl \
 		wget \
@@ -19,20 +18,45 @@ RUN set -eux; \
 		subversion \
 		\
 # we need "gsfonts" for generating PNGs of Gantt charts
-# and "ghostscript" for creating PDF thumbnails (in Redmine 4.1+)
+# and "ghostscript" for creating PDF thumbnails (in 4.1+)
 		ghostscript \
 		gsfonts \
 		imagemagick \
-# grab gosu for easy step-down from root
-		gosu \
 # grab tini for signal processing and zombie killing
 		tini \
-# https://github.com/docker-library/ruby/issues/344
-		shared-mime-info \
 	; \
 # allow imagemagick to use ghostscript for PDF -> PNG thumbnail conversion (4.1+)
 	sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml; \
 	rm -rf /var/lib/apt/lists/*
+
+# grab gosu for easy step-down from root
+ENV GOSU_VERSION 1.17
+RUN set -eux; \
+	\
+	savedAptMark="$(apt-mark showmanual)"; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+		gnupg \
+	; \
+	rm -rf /var/lib/apt/lists/*; \
+	\
+	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
+	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
+	wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
+	export GNUPGHOME="$(mktemp -d)"; \
+	gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
+	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
+	gpgconf --kill all; \
+	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
+	\
+	apt-mark auto '.*' > /dev/null; \
+	apt-mark manual $savedAptMark > /dev/null; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	\
+# smoke test
+	chmod +x /usr/local/bin/gosu; \
+	gosu --version; \
+	gosu nobody true
 
 ENV RAILS_ENV production
 WORKDIR /usr/src/redmine
@@ -46,7 +70,7 @@ RUN set -eux; \
 	chown redmine:redmine "$HOME"; \
 	chmod 1777 "$HOME"
 
-ENV REDMICA_VERSION 2.4.2
+ENV REDMICA_VERSION 3.0.0
 
 RUN set -eux; \
 	wget -O redmine.tar.gz "https://github.com/redmica/redmica/archive/v${REDMICA_VERSION}.tar.gz"; \
@@ -70,8 +94,11 @@ RUN set -eux; \
 		gcc \
 		libpq-dev \
 		libsqlite3-dev \
+		libxml2-dev \
+		libxslt-dev \
 		make \
 		patch \
+		pkgconf \
 		xz-utils \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
@@ -88,6 +115,8 @@ RUN set -eux; \
 		echo "$adapter:" >> ./config/database.yml; \
 		echo "  adapter: $adapter" >> ./config/database.yml; \
 	done; \
+# nokogiri's vendored libxml2 + libxslt do not build on mips64le, so use the apt packages when building
+	gosu redmine bundle config build.nokogiri --use-system-libraries; \
 	gosu redmine bundle install --jobs "$(nproc)"; \
 	rm ./config/database.yml; \
 # fix permissions for running as an arbitrary user
@@ -98,7 +127,7 @@ RUN set -eux; \
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
 	find /usr/local -type f -executable -exec ldd '{}' ';' \
-		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); print so }' \
+		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
 		| sort -u \
 		| xargs -r dpkg-query --search \
 		| cut -d: -f1 \
