@@ -50,7 +50,5 @@ for version in $new_versions; do
 
 	mkdir -p "$version/alpine"
 	cp docker-entrypoint.sh "$version/alpine/"
-	sed -e 's/gosu/su-exec/g' "$version/alpine/docker-entrypoint.sh" > /tmp/docker-entrypoint.sh
-	cp /tmp/docker-entrypoint.sh "$version/alpine/docker-entrypoint.sh"
 	sed "${commonSedArgs[@]}" Dockerfile-alpine.template > "$version/alpine/Dockerfile"
 done

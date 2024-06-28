@@ -26,7 +26,7 @@ file_env() {
 
 isLikelyRedmine=
 case "$1" in
-	rails | rake | passenger ) isLikelyRedmine=1 ;;
+	rails | rake ) isLikelyRedmine=1 ;;
 esac
 
 _fix_permissions() {
@@ -51,7 +51,7 @@ _fix_permissions() {
 # allow the container to be started with `--user`
 if [ -n "$isLikelyRedmine" ] && [ "$(id -u)" = '0' ]; then
 	_fix_permissions
-	exec su-exec redmine "$BASH_SOURCE" "$@"
+	exec gosu redmine "$BASH_SOURCE" "$@"
 fi
 
 if [ -n "$isLikelyRedmine" ]; then
@@ -155,11 +155,6 @@ if [ -n "$isLikelyRedmine" ]; then
 
 	# remove PID file to enable restarting the container
 	rm -f tmp/pids/server.pid
-
-	if [ "$1" = 'passenger' ]; then
-		# Don't fear the reaper.
-		set -- tini -- "$@"
-	fi
 fi
 
 exec "$@"
