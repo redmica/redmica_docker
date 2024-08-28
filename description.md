@@ -3,8 +3,8 @@
 
 # latest
 
-- [3.0.1](https://github.com/redmica/redmica_docker/blob/master/3.0.1/Dockerfile), [3.0](https://github.com/redmica/redmica_docker/blob/master/3.0.1/Dockerfile), [latest](https://github.com/redmica/redmica_docker/blob/master/3.0.1/Dockerfile)
-- [3.0.1-alpine](https://github.com/redmica/redmica_docker/blob/master/3.0.1/alpine/Dockerfile)
+- [3.0.2](https://github.com/redmica/redmica_docker/blob/master/3.0.2/Dockerfile), [3.0](https://github.com/redmica/redmica_docker/blob/master/3.0.2/Dockerfile), [latest](https://github.com/redmica/redmica_docker/blob/master/3.0.2/Dockerfile)
+- [3.0.2-alpine](https://github.com/redmica/redmica_docker/blob/master/3.0.2/alpine/Dockerfile)
 
 # How to use this image
 
