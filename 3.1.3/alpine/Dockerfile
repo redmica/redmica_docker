@@ -1,17 +1,20 @@
-FROM ruby:3.3-slim-bookworm
+FROM ruby:3.3-alpine3.20
 
 # explicitly set uid/gid to guarantee that it won't change in the future
 # the values 999:999 are identical to the current user/group id assigned
-RUN groupadd -r -g 999 redmine && useradd -r -g redmine -u 999 redmine
+# alpine already has a gid 999, so we'll use the next id
+RUN addgroup -S -g 1000 redmine && adduser -S -H -G redmine -u 999 redmine
 
 RUN set -eux; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
+	apk add --no-cache \
+		bash \
 		ca-certificates \
-		curl \
+		findutils \
+		tini \
+		tzdata \
 		wget \
 		\
-		bzr \
+		breezy \
 		git \
 		mercurial \
 		openssh-client \
@@ -20,25 +23,20 @@ RUN set -eux; \
 # we need "gsfonts" for generating PNGs of Gantt charts
 # and "ghostscript" for creating PDF thumbnails (in 4.1+)
 		ghostscript \
-		gsfonts \
+		ghostscript-fonts \
 		imagemagick \
-# grab tini for signal processing and zombie killing
-		tini \
-	; \
-# allow imagemagick to use ghostscript for PDF -> PNG thumbnail conversion (4.1+)
-	sed -ri 's/(rights)="none" (pattern="PDF")/\1="read" \2/' /etc/ImageMagick-6/policy.xml; \
-	rm -rf /var/lib/apt/lists/*
+	;
 
 # grab gosu for easy step-down from root
+# https://github.com/tianon/gosu/releases
 ENV GOSU_VERSION 1.17
 RUN set -eux; \
 	\
-	savedAptMark="$(apt-mark showmanual)"; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
+	apk add --no-cache --virtual .gosu-deps \
+		ca-certificates \
+		dpkg \
 		gnupg \
 	; \
-	rm -rf /var/lib/apt/lists/*; \
 	\
 	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
 	wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
@@ -49,9 +47,7 @@ RUN set -eux; \
 	gpgconf --kill all; \
 	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
 	\
-	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark > /dev/null; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	apk del --no-network .gosu-deps; \
 	\
 # smoke test
 	chmod +x /usr/local/bin/gosu; \
@@ -70,7 +66,7 @@ RUN set -eux; \
 	chown redmine:redmine "$HOME"; \
 	chmod 1777 "$HOME"
 
-ENV REDMICA_VERSION 3.1.2
+ENV REDMICA_VERSION 3.1.3
 
 RUN set -eux; \
 	wget -O redmine.tar.gz "https://github.com/redmica/redmica/archive/v${REDMICA_VERSION}.tar.gz"; \
@@ -84,24 +80,23 @@ RUN set -eux; \
 	chmod -R ugo=rwX config db sqlite; \
 	find log tmp -type d -exec chmod 1777 '{}' +
 
+# build for musl-libc, not glibc (see https://github.com/sparklemotion/nokogiri/issues/2075, https://github.com/rubygems/rubygems/issues/3174)
+ENV BUNDLE_FORCE_RUBY_PLATFORM 1
 RUN set -eux; \
 	\
-	savedAptMark="$(apt-mark showmanual)"; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends \
-		default-libmysqlclient-dev \
+	apk add --no-cache --virtual .build-deps \
+		coreutils \
 		freetds-dev \
 		gcc \
-		libpq-dev \
-		libsqlite3-dev \
-		libxml2-dev \
-		libxslt-dev \
 		make \
+		mariadb-dev \
+		musl-dev \
 		patch \
-		pkgconf \
-		xz-utils \
+		postgresql-dev \
+		sqlite-dev \
+		ttf2ufm \
+		zlib-dev \
 	; \
-	rm -rf /var/lib/apt/lists/*; \
 	\
 	gosu redmine bundle config --local without 'development test'; \
 # https://github.com/redmine/redmine/commit/23dc108e70a0794f444803ac827a690085dcd557
@@ -115,26 +110,24 @@ RUN set -eux; \
 		echo "$adapter:" >> ./config/database.yml; \
 		echo "  adapter: $adapter" >> ./config/database.yml; \
 	done; \
-# nokogiri's vendored libxml2 + libxslt do not build on mips64le, so use the apt packages when building
-	gosu redmine bundle config build.nokogiri --use-system-libraries; \
 	gosu redmine bundle install --jobs "$(nproc)"; \
 	rm ./config/database.yml; \
 # fix permissions for running as an arbitrary user
 	chmod -R ugo=rwX Gemfile.lock "$GEM_HOME"; \
+# this requires coreutils because "chmod +X" in busybox will remove +x on files (and coreutils leaves files alone with +X)
 	rm -rf ~redmine/.bundle; \
 	\
-# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
-	apt-mark auto '.*' > /dev/null; \
-	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
-	find /usr/local -type f -executable -exec ldd '{}' ';' \
-		| awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
+# https://github.com/naitoh/rbpdf/issues/31
+	rm /usr/local/bundle/gems/rbpdf-font-1.19.*/lib/fonts/ttf2ufm/ttf2ufm; \
+	\
+	runDeps="$( \
+		scanelf --needed --nobanner --format '%n#p' --recursive /usr/local/bundle/gems \
+		| tr ',' '\n' \
 		| sort -u \
-		| xargs -r dpkg-query --search \
-		| cut -d: -f1 \
-		| sort -u \
-		| xargs -r apt-mark manual \
-	; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+		| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
+	)"; \
+	apk add --no-network --virtual .redmine-rundeps $runDeps; \
+	apk del --no-network .build-deps
 
 VOLUME /usr/src/redmine/files
 
