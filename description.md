@@ -62,6 +62,7 @@ services:
     ports:
       - 8080:3000
     environment:
+      RAILS_ENV: production
       REDMINE_DB_MYSQL: db
       REDMINE_DB_PASSWORD: example
       REDMINE_SECRET_KEY_BASE: supersecretkey
