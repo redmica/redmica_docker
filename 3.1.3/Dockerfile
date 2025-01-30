@@ -84,7 +84,7 @@ RUN set -eux; \
 		default-libmysqlclient-dev \
 		freetds-dev \
 		gcc \
-		libpq-dev \
+		postgresql-server-dev-all \
 		libsqlite3-dev \
 		libxml2-dev \
 		libxslt-dev \
