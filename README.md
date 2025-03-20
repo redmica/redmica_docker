@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> We will discontinue maintenance of this Docker image and archive this repository when RedMica 3.2.0 is released, which is scheduled for May 2025. This means that Docker images for RedMica 3.2.0 and later will not be provided.
+> 
+> Please note that the development of RedMica will continue as usual; we are only discontinuing maintenance of this Docker image.
+
 # RedMica's Dockerfile
 
 This repository develops RedMica's Dockerfile [Docker Hub link](https://hub.docker.com/r/redmica/redmica).  
