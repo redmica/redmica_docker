@@ -3,7 +3,7 @@
 
 # latest
 
-- [3.1.6](https://github.com/redmica/redmica_docker/blob/3.1.6/3.1.6/Dockerfile), [3.1](https://github.com/redmica/redmica_docker/blob/3.1.6/3.1.6/Dockerfile), [latest](https://github.com/redmica/redmica_docker/blob/3.1.6/3.1.6/Dockerfile)
+- [3.1.7](https://github.com/redmica/redmica_docker/blob/3.1.7/3.1.7/Dockerfile), [3.1](https://github.com/redmica/redmica_docker/blob/3.1.7/3.1.7/Dockerfile), [latest](https://github.com/redmica/redmica_docker/blob/3.1.7/3.1.7/Dockerfile)
 
 # How to use this image
 
