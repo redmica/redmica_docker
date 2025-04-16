@@ -11,9 +11,9 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          [3.1.6]
+          [3.1.7]
         include:
-          - version: 3.1.6
+          - version: 3.1.7
             other_tag: '3.1'
             latest: true
           # - version: 2.0.0
@@ -70,9 +70,9 @@ jobs:
   #     fail-fast: false
   #     matrix:
   #       version:
-  #         [3.1.6]
+  #         [3.1.7]
   #       include:
-  #         - version: 3.1.6
+  #         - version: 3.1.7
   #           other_tag: '3.1'
   #           latest: true
   #         # - version: 2.0.0
